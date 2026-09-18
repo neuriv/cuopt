@@ -222,14 +222,8 @@ grpc_result_outcome_t grpc_python_client_t::result(const std::string& job_id)
     return out;
   }
 
-  out.solution = std::make_unique<solver_ret_t>();
-  if (remote.is_mip) {
-    out.solution->problem_type = cuopt::mathematical_optimization::problem_category_t::MIP;
-    out.solution->mip_ret      = remote.mip_solution->to_cpu_mip_ret_t();
-  } else {
-    out.solution->problem_type = cuopt::mathematical_optimization::problem_category_t::LP;
-    out.solution->lp_ret       = remote.lp_solution->to_cpu_linear_programming_ret_t();
-  }
+  out.lp_solution  = std::move(remote.lp_solution);
+  out.mip_solution = std::move(remote.mip_solution);
 
   out.success = true;
   return out;

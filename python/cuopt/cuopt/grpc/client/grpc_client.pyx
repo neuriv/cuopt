@@ -42,9 +42,8 @@ from cuopt.grpc.client.grpc_client cimport (
     routing_solver_settings_t,
 )
 from cuopt.linear_programming.data_model.data_model_wrapper cimport DataModel
-from cuopt.linear_programming.solver.solver cimport solver_ret_t
 from cuopt.linear_programming.solver.solver_wrapper cimport (
-    build_solution_from_unique_ptr,
+    build_solution_from_cpu,
 )
 from cuopt.linear_programming.solver.solver_wrapper import (
     prepare_solver_settings,
@@ -430,15 +429,15 @@ cdef class Client:
         failed or was cancelled.
         """
         cdef grpc_result_outcome_t outcome
-        cdef unique_ptr[solver_ret_t] sol_ret
 
         outcome = self._client.get().result(job_id.encode("utf-8"))
         if outcome.not_ready:
             return None
         if not outcome.success:
             raise GrpcError(outcome.error_message.decode("utf-8"))
-        sol_ret = move(outcome.solution)
-        return build_solution_from_unique_ptr(move(sol_ret), variable_names)
+        return build_solution_from_cpu(
+            move(outcome.lp_solution), move(outcome.mip_solution), variable_names
+        )
 
     def logs(self, str job_id, from_byte=0):
         """

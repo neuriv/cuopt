@@ -7,7 +7,7 @@
 # unit: they wrap the same C++ client object, and keeping them together lets the
 # client be detached from the engines as a single package later.
 set(cython_sources grpc_client.pyx)
-set(linked_libraries cuopt::client)
+set(linked_libraries cuopt::client rmm::rmm)
 
 rapids_cython_create_modules(
   CXX

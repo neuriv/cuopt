@@ -22,7 +22,7 @@ from libc.stdint cimport uintptr_t, uint32_t
 from libc.stdlib cimport free, malloc
 from libc.string cimport memcpy, strcpy, strlen
 from libcpp cimport bool
-from libcpp.memory cimport unique_ptr
+from libcpp.memory cimport make_unique, unique_ptr
 from libcpp.pair cimport pair
 from libcpp.string cimport string
 from libcpp.utility cimport move
@@ -42,6 +42,8 @@ from cuopt.linear_programming.data_model.data_model_wrapper cimport DataModel
 from cuopt.linear_programming.solver.solver cimport (
     call_batch_solve,
     call_solve,
+    cpu_lp_solution_t,
+    cpu_mip_solution_t,
     error_type_t,
     get_cpu_lp_solutions,
     get_cpu_mip_solution,
@@ -537,10 +539,18 @@ cdef create_solution_with_names(unique_ptr[solver_ret_t] sol_ret_ptr,
             )
 
 
-cdef object build_solution_from_unique_ptr(
-        unique_ptr[solver_ret_t] sol_ret_ptr,
+cdef object build_solution_from_cpu(
+        unique_ptr[cpu_lp_solution_t[int, double]] lp_solution,
+        unique_ptr[cpu_mip_solution_t[int, double]] mip_solution,
         object variable_names):
-    return create_solution_with_names(move(sol_ret_ptr), variable_names, False)
+    cdef unique_ptr[solver_ret_t] result = make_unique[solver_ret_t]()
+    if mip_solution.get() != NULL:
+        result.get().problem_type = problem_category_t.MIP
+        result.get().mip_ret = mip_solution.get().to_cpu_mip_ret_t()
+    else:
+        result.get().problem_type = problem_category_t.LP
+        result.get().lp_ret = lp_solution.get().to_cpu_linear_programming_ret_t()
+    return create_solution_with_names(move(result), variable_names, False)
 
 
 def prepare_solver_settings(SolverSettings settings, data_model=None, mip=False):

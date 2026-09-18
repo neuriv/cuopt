@@ -6,7 +6,7 @@
 #pragma once
 
 #include <cuopt/export.hpp>
-#include <cuopt/mathematical_optimization/utilities/cython_solve.hpp>
+#include <cuopt/mathematical_optimization/cpu_optimization_problem_solution.hpp>
 #include <cuopt/routing/cpu_routing_problem.hpp>
 
 #include <cstddef>
@@ -61,7 +61,8 @@ struct grpc_result_outcome_t {
   bool not_ready = false;
   bool success   = false;
   std::string error_message;
-  std::unique_ptr<solver_ret_t> solution;
+  std::unique_ptr<mathematical_optimization::cpu_lp_solution_t<int, double>> lp_solution;
+  std::unique_ptr<mathematical_optimization::cpu_mip_solution_t<int, double>> mip_solution;
 };
 
 struct grpc_vrp_result_outcome_t {

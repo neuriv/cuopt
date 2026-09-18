@@ -160,6 +160,14 @@ cdef extern from "cuopt/mathematical_optimization/utilities/cython_solve.hpp" na
         solver_settings_t[int, double]* solver_settings,
     ) except + nogil
 
+cdef extern from "cuopt/mathematical_optimization/cpu_optimization_problem_solution.hpp" namespace "cuopt::mathematical_optimization":  # noqa
+    cdef cppclass cpu_lp_solution_t[i_t, f_t]:
+        linear_programming_ret_t to_cpu_linear_programming_ret_t() except +
+
+    cdef cppclass cpu_mip_solution_t[i_t, f_t]:
+        mip_ret_t to_cpu_mip_ret_t() except +
+
+
 # Variant helper functions — Cython can't call std::get directly, so we use
 # inline C++ helpers to extract the GPU/CPU alternatives from inner variants.
 cdef extern from *:

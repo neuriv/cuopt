@@ -14,7 +14,10 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 
 from cuopt.linear_programming.data_model.data_model cimport data_model_view_t
-from cuopt.linear_programming.solver.solver cimport solver_ret_t
+from cuopt.linear_programming.solver.solver cimport (
+    cpu_lp_solution_t,
+    cpu_mip_solution_t,
+)
 from cuopt.linear_programming.solver_settings.solver_settings cimport (
     solver_settings_t as lp_solver_settings_t,
 )
@@ -159,7 +162,8 @@ cdef extern from "cuopt/grpc/cython_grpc_client.hpp" namespace "cuopt::cython":
         bint not_ready
         bint success
         string error_message
-        unique_ptr[solver_ret_t] solution
+        unique_ptr[cpu_lp_solution_t[int, double]] lp_solution
+        unique_ptr[cpu_mip_solution_t[int, double]] mip_solution
 
     cdef cppclass grpc_vrp_result_outcome_t:
         bint not_ready

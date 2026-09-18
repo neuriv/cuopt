@@ -15,8 +15,6 @@
 
 #include <rmm/device_uvector.hpp>
 
-#include <cuopt/mathematical_optimization/utilities/cython_types.hpp>
-
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -327,13 +325,6 @@ class lp_solution_interface_t : public optimization_problem_solution_interface_t
   virtual f_t get_last_restart_kkt_score() const                                     = 0;
   virtual f_t get_sum_solution_weight() const                                        = 0;
   virtual i_t get_iterations_since_last_restart() const                              = 0;
-
-  /**
-   * @brief Convert to Python/Cython return type (polymorphic version)
-   * This method allows backend-agnostic conversion to Python return structs.
-   * GPU solutions populate the gpu_solutions_t variant; CPU solutions populate cpu_solutions_t.
-   */
-  virtual cuopt::cython::linear_programming_ret_t to_python_lp_ret() = 0;
 };
 
 /**
@@ -466,13 +457,6 @@ class mip_solution_interface_t : public optimization_problem_solution_interface_
    * @return Number of simplex iterations
    */
   virtual i_t get_num_simplex_iterations() const = 0;
-
-  /**
-   * @brief Convert to Python/Cython return type (polymorphic version)
-   * This method allows backend-agnostic conversion to Python return structs.
-   * GPU solutions populate the gpu_buffer variant; CPU solutions populate cpu_buffer.
-   */
-  virtual cuopt::cython::mip_ret_t to_python_mip_ret() = 0;
 };
 
 // Forward declarations of concrete implementations

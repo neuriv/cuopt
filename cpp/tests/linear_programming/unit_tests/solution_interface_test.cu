@@ -542,7 +542,7 @@ TEST_F(SolutionInterfaceTest, gpu_adopt_consumes_mps_data_model)
 TEST_F(SolutionInterfaceTest, lp_solution_to_python_ret)
 {
   auto sol        = make_gpu_lp_solution();
-  auto python_ret = sol.to_python_lp_ret();
+  auto python_ret = sol.to_linear_programming_ret_t();
 
   EXPECT_TRUE(python_ret.is_gpu());
   EXPECT_NEAR(python_ret.primal_objective_, -42.0, 1e-9);
@@ -554,7 +554,7 @@ TEST_F(SolutionInterfaceTest, cpu_lp_solution_to_python_ret)
   // pdlp/solution_conversion_cpu.cpp -- assert every field it populates when there
   // is no warm-start data.
   auto cpu_sol    = make_cpu_lp_solution(/*with_warmstart=*/false);
-  auto python_ret = cpu_sol->to_python_lp_ret();
+  auto python_ret = cpu_sol->to_cpu_linear_programming_ret_t();
 
   EXPECT_FALSE(python_ret.is_gpu());
   ASSERT_TRUE(std::holds_alternative<cuopt::cython::linear_programming_ret_t::cpu_solutions_t>(
@@ -602,7 +602,7 @@ TEST_F(SolutionInterfaceTest, cpu_lp_solution_to_python_ret_with_warmstart)
   // cpu_solutions_t buffers and the warm-start scalars -- the part of
   // to_cpu_linear_programming_ret_t() the previous test cannot reach.
   auto cpu_sol    = make_cpu_lp_solution(/*with_warmstart=*/true);
-  auto python_ret = cpu_sol->to_python_lp_ret();
+  auto python_ret = cpu_sol->to_cpu_linear_programming_ret_t();
 
   EXPECT_FALSE(python_ret.is_gpu());
   const auto& cpu =
@@ -632,7 +632,7 @@ TEST_F(SolutionInterfaceTest, cpu_lp_solution_to_python_ret_with_warmstart)
 TEST_F(SolutionInterfaceTest, mip_solution_to_python_ret)
 {
   auto sol        = make_gpu_mip_solution();
-  auto python_ret = sol.to_python_mip_ret();
+  auto python_ret = sol.to_mip_ret_t();
 
   EXPECT_TRUE(python_ret.is_gpu());
   EXPECT_NEAR(python_ret.objective_, -99.0, 1e-9);
@@ -643,7 +643,7 @@ TEST_F(SolutionInterfaceTest, cpu_mip_solution_to_python_ret)
   // Exercises cpu_mip_solution_t::to_cpu_mip_ret_t(), moved into
   // pdlp/solution_conversion_cpu.cpp -- assert every field it populates.
   auto cpu_sol    = make_cpu_mip_solution();
-  auto python_ret = cpu_sol->to_python_mip_ret();
+  auto python_ret = cpu_sol->to_cpu_mip_ret_t();
 
   EXPECT_FALSE(python_ret.is_gpu());
   ASSERT_TRUE(std::holds_alternative<cuopt::cython::cpu_buffer>(python_ret.solution_));

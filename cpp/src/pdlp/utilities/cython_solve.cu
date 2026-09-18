@@ -163,7 +163,9 @@ std::unique_ptr<solver_ret_t> call_solve(
         std::unique_ptr<mathematical_optimization::lp_solution_interface_t<int, double>>(
           call_solve_lp(&problem, solver_settings->get_pdlp_settings(), is_batch_mode));
 
-      response.lp_ret       = lp_solution_ptr->to_python_lp_ret();
+      response.lp_ret =
+        static_cast<mathematical_optimization::gpu_lp_solution_t<int, double>&>(*lp_solution_ptr)
+          .to_linear_programming_ret_t();
       response.problem_type = mathematical_optimization::problem_category_t::LP;
 
       // The solve's local stream is destroyed when this function returns, so reassociate
@@ -191,7 +193,9 @@ std::unique_ptr<solver_ret_t> call_solve(
         std::unique_ptr<mathematical_optimization::mip_solution_interface_t<int, double>>(
           call_solve_mip(&problem, solver_settings->get_mip_settings()));
 
-      response.mip_ret      = mip_solution_ptr->to_python_mip_ret();
+      response.mip_ret =
+        static_cast<mathematical_optimization::gpu_mip_solution_t<int, double>&>(*mip_solution_ptr)
+          .to_mip_ret_t();
       response.problem_type = mathematical_optimization::problem_category_t::MIP;
 
       // Same stream reassociation as the LP path above.
@@ -230,7 +234,9 @@ std::unique_ptr<solver_ret_t> call_solve(
         std::unique_ptr<mathematical_optimization::lp_solution_interface_t<int, double>>(
           call_solve_lp(&cpu_problem, solver_settings->get_pdlp_settings(), is_batch_mode));
 
-      response.lp_ret       = lp_solution_ptr->to_python_lp_ret();
+      response.lp_ret =
+        static_cast<mathematical_optimization::cpu_lp_solution_t<int, double>&>(*lp_solution_ptr)
+          .to_cpu_linear_programming_ret_t();
       response.problem_type = mathematical_optimization::problem_category_t::LP;
 
     } else {
@@ -238,7 +244,9 @@ std::unique_ptr<solver_ret_t> call_solve(
         std::unique_ptr<mathematical_optimization::mip_solution_interface_t<int, double>>(
           call_solve_mip(&cpu_problem, solver_settings->get_mip_settings()));
 
-      response.mip_ret      = mip_solution_ptr->to_python_mip_ret();
+      response.mip_ret =
+        static_cast<mathematical_optimization::cpu_mip_solution_t<int, double>&>(*mip_solution_ptr)
+          .to_cpu_mip_ret_t();
       response.problem_type = mathematical_optimization::problem_category_t::MIP;
     }
   }

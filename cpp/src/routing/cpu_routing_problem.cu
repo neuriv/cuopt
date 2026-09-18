@@ -6,6 +6,7 @@
 /* clang-format on */
 
 #include <cuopt/routing/cpu_routing_problem.hpp>
+#include <cuopt/routing/data_model_view.hpp>
 
 #include <utilities/copy_helpers.hpp>
 

@@ -5,12 +5,7 @@
 
 #pragma once
 
-#include <cuopt/mathematical_optimization/cpu_optimization_problem_solution.hpp>
-#include <cuopt/mathematical_optimization/mip/solver_settings.hpp>
-#include <cuopt/mathematical_optimization/optimization_problem_interface.hpp>
-#include <cuopt/mathematical_optimization/pdlp/solver_settings.hpp>
 #include <cuopt/routing/cpu_routing_problem.hpp>
-#include <cuopt/routing/solver_settings.hpp>
 
 #include "../cuopt_default_grpc_port.h"
 
@@ -37,7 +32,23 @@ class ResultResponse;
 class SubmitJobRequest;
 }  // namespace cuopt::remote
 
+namespace cuopt::routing {
+template <typename i_t, typename f_t>
+class solver_settings_t;
+}  // namespace cuopt::routing
+
 namespace cuopt::mathematical_optimization {
+
+template <typename i_t, typename f_t>
+class cpu_optimization_problem_t;
+template <typename i_t, typename f_t>
+class cpu_lp_solution_t;
+template <typename i_t, typename f_t>
+class cpu_mip_solution_t;
+template <typename i_t, typename f_t>
+class pdlp_solver_settings_t;
+template <typename i_t, typename f_t>
+class mip_solver_settings_t;
 
 // Forward declarations for test helper functions (implemented in grpc_client.cpp)
 void grpc_test_inject_mock_stub(class grpc_client_t& client, std::shared_ptr<void> stub);

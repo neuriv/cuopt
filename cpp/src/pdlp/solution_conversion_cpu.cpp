@@ -7,10 +7,10 @@
 
 // Host-side solution conversions, split out of solution_conversion.cu.
 //
-// cpu_lp_solution_t / cpu_mip_solution_t hold std::vector data and simply move it into
-// the cython ret structs -- no device memory involved. Keeping them in a .cu TU forced
-// the gRPC client to depend on libcuopt.so purely to resolve these two symbols, so they
-// live in cuopt_client instead. The GPU counterparts stay in solution_conversion.cu.
+// cpu_lp_solution_t / cpu_mip_solution_t move std::vector data into the CPU
+// alternatives of the Cython return structs. Those structs also contain GPU
+// alternatives, so conversion lives in mathopt rather than cuopt_client.
+// The GPU counterparts stay in solution_conversion.cu.
 
 #include <cuopt/export.hpp>
 #include <cuopt/mathematical_optimization/cpu_optimization_problem_solution.hpp>
